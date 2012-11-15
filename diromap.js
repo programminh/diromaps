@@ -4,6 +4,7 @@ var ctx;
 var img;
 var currentPosition;
 var previousPosition = {x: 0, y: 0};
+var currentZoom = 1;
 
 // Detects if we are dragging or not.
 var draggable = false;
@@ -47,6 +48,9 @@ function init() {
         loadFloor(currentFloor);
     });
 
+    document.getElementById("zoomIn").addEventListener("click", zoomIn);
+    document.getElementById("zoomOut").addEventListener("click", zoomOut);
+
     loadFloor(0);
 }
 
@@ -71,5 +75,13 @@ function moveMap(e) {
     }
 }
 
+
+function zoomIn() {
+    currentZoom += 0.2;
+}
+
+function zoomOut() {
+    currentZoom -= 0.2;
+}
 
 window.addEventListener("load", init);
