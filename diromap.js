@@ -86,11 +86,13 @@ function redrawFloor(x, y) {
 
 function zoomIn() {
     currentZoom += 0.2;
+    resetPreviousPosition();
     redrawFloor(0, 0);
 }
 
 function zoomOut() {
     currentZoom -= 0.2;
+    resetPreviousPosition();
     redrawFloor(0, 0);
 }
 
