@@ -2,7 +2,7 @@
 var canvas;
 var ctx;
 var img;
-var currentPosition;
+var currentPosition = {x: 0, y: 0};
 var previousPosition = {x: 0, y: 0};
 var currentZoom = 1;
 
@@ -10,9 +10,11 @@ var currentZoom = 1;
 var draggable = false;
 
 var currentFloor = 0;
-var floors = ["images/etage1.gif",
-              "images/etage2.gif",
-              "images/etage3.gif"];
+var floors = [
+    {image: "images/etage1.gif", width: 587, height: 612},
+    {image: "images/etage2.gif", width: 587, height: 635},
+    {image: "images/etage3.gif", width: 587, height: 645}
+];
 
 function init() {
     canvas = document.getElementById("canvas");
@@ -60,28 +62,36 @@ function resetPreviousPosition() {
 }
 
 
-function loadFloor(n) {
-    img.src = floors[n];
-    ctx.drawImage(img, 0, 0);
+function loadFloor(floorIndex) {
+    var floor = floors[floorIndex];
+    img.src = floor.image;
+    currentZoom = 1;
+    redrawFloor(0, 0);
 }
 
 
 function moveMap(e) {
     if (draggable) {
-        ctx.clearRect(0, 0, 640, 480);
-        ctx.drawImage(img,
-                      e.clientX - currentPosition.x,
-                      e.clientY - currentPosition.y);
+        redrawFloor(e.clientX - currentPosition.x, e.clientY - currentPosition.y);
     }
 }
 
 
+function redrawFloor(x, y) {
+    ctx.clearRect(0, 0, 640, 480);
+    ctx.drawImage(img, x, y,
+                  floors[currentFloor].width*currentZoom,
+                  floors[currentFloor].height*currentZoom);
+}
+
 function zoomIn() {
     currentZoom += 0.2;
+    redrawFloor(0, 0);
 }
 
 function zoomOut() {
     currentZoom -= 0.2;
+    redrawFloor(0, 0);
 }
 
 window.addEventListener("load", init);
