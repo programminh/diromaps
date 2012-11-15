@@ -1,20 +1,33 @@
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="diromap.css" />
     <script src="diromap.js" type="text/javascript"></script>
   </head>
   <body>
-    <h1>Diro Map</h1>
+    <div id="content">
+      <h1>Diro Map</h1>
 
-    <table>
-      <tr>
-        <td><img id="up" src="images/EnHaut.png" /></td>
-        <td rowspan="2">
-          <canvas id="canvas" width="640" height="480" style="border: 1px solid #000">
-        </td>
-      </tr>
-      <tr>
-        <td style="vertical-align:bottom"><img id="down" src="images/EnBas.png" /></td>
-      </tr>
-    </canvas>
+      <table>
+        <tr>
+
+          <td id="left">
+            <img id="up" src="images/EnHaut.png" />
+            <p />
+            <img id="down" src="images/EnBas.png" />
+          </td>
+
+          <td>
+            <canvas id="canvas" width="640" height="480">
+            </canvas>
+          </td>
+
+          <td id="right">
+            <img id="zoomin" src="images/ZoomPlus.png" />
+            <p />
+            <img id="zoomout" src="images/ZoomMoins.png" />
+          </td>
+
+        </tr>
+    </div>
   </body>
 </html>
