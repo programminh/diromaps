@@ -16,31 +16,55 @@ var floors = [
     {image: "images/etage3.gif", width: 587, height: 645}
 ];
 
-function init() {
-    canvas = document.getElementById("canvas");
-    ctx = canvas.getContext("2d");
+$(document).ready(function() {
+    console.log('ready');
+
+    canvas = $('#canvas');
+    ctx = canvas[0].getContext("2d");
     img = new Image();
 
+    // Preload images
+    for (var i = floors.length - 1; i >= 0; i--) {
+        img.src = floors[i].image;
+    };
+
     // Install listeners for canvas dragging
-    canvas.addEventListener("mousedown", function (e) {
+    canvas.on("mousedown", function (e) {
         currentPosition = {x: e.clientX + previousPosition.x,
                            y: e.clientY + previousPosition.y};
         draggable = true;
+
+        // Disable text select cursor
+        document.onselectstart = function() {
+            return false;
+        }
+
+        // Change the cursor to a grabbing hand
+        canvas.addClass('grabbing');
     });
-    canvas.addEventListener("mouseup", function (e) {
+    canvas.on("mouseup", function (e) {
         previousPosition = {x: currentPosition.x - e.clientX,
                             y: currentPosition.y - e.clientY};
         draggable = false;
-    });
-    canvas.addEventListener("mousemove", moveMap);
 
-    document.getElementById("up").addEventListener("click", function () {
+        // Enable text select cursor
+        document.onselectstart = function() {
+            return true;
+        }
+
+        // Change the cursor to a pointer
+        canvas.removeClass('grabbing');
+    });
+
+    canvas.on("mousemove", moveMap);
+
+    $('#up').on("click", function () {
         resetPreviousPosition();
         currentFloor = (currentFloor + 1) % floors.length;
         loadFloor(currentFloor);
     });
 
-    document.getElementById("down").addEventListener("click", function () {
+    $('#down').on("click", function () {
         resetPreviousPosition();
         // HACK
         if (currentFloor === 0)
@@ -50,12 +74,11 @@ function init() {
         loadFloor(currentFloor);
     });
 
-    document.getElementById("zoomIn").addEventListener("click", zoomIn);
-    document.getElementById("zoomOut").addEventListener("click", zoomOut);
+    $('#zoomIn').on("click", zoomIn);
+    $('#zoomOut').on("click", zoomOut);
 
     loadFloor(0);
-}
-
+});
 
 function resetPreviousPosition() {
     previousPosition = {x: 0, y: 0};
@@ -95,5 +118,3 @@ function zoomOut() {
     resetPreviousPosition();
     redrawFloor(0, 0);
 }
-
-window.addEventListener("load", init);
