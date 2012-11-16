@@ -42,3 +42,7 @@ td {
 img {
     cursor: hand;
 }
+
+img.map {
+    display: none;
+}

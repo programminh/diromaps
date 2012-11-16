@@ -22,11 +22,13 @@ $(document).ready(function() {
     canvas = $('#canvas');
     ctx = canvas[0].getContext("2d");
     img = new Image();
-
-    // Preload images
-    for (var i = floors.length - 1; i >= 0; i--) {
-        img.src = floors[i].image;
-    };
+    img.src = "images/etage1.gif";
+    img.onload = function() {
+        // Load first floor
+        ctx.drawImage(img, 0, 0);
+    }
+    
+    
 
     // Install listeners for canvas dragging
     canvas.on("mousedown", function (e) {
@@ -42,6 +44,7 @@ $(document).ready(function() {
         // Change the cursor to a grabbing hand
         canvas.addClass('grabbing');
     });
+
     canvas.on("mouseup", function (e) {
         previousPosition = {x: currentPosition.x - e.clientX,
                             y: currentPosition.y - e.clientY};
@@ -77,7 +80,6 @@ $(document).ready(function() {
     $('#zoomIn').on("click", zoomIn);
     $('#zoomOut').on("click", zoomOut);
 
-    loadFloor(0);
 });
 
 function resetPreviousPosition() {
@@ -107,14 +109,28 @@ function redrawFloor(x, y) {
                   floors[currentFloor].height*currentZoom);
 }
 
+function zoom() {
+    var width = floors[currentFloor].width*currentZoom;
+    var height = floors[currentFloor].height*currentZoom;
+    var newWidth = width * currentZoom;
+    var newHeight = height * currentZoom;
+
+    ctx.clearRect(0, 0, 640, 480);
+    ctx.save();
+    ctx.translate(-((newWidth - width) / 2), -((newHeight - height) / 2));
+    ctx.scale(currentZoom, currentZoom);
+    ctx.drawImage(img, 0, 0);
+    ctx.restore();
+}
+
 function zoomIn() {
     currentZoom += 0.2;
     resetPreviousPosition();
-    redrawFloor(0, 0);
+    zoom();
 }
 
 function zoomOut() {
     currentZoom -= 0.2;
     resetPreviousPosition();
-    redrawFloor(0, 0);
+    zoom();
 }
