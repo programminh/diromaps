@@ -26,9 +26,9 @@ $(document).ready(function() {
     img.onload = function() {
         // Load first floor
         ctx.drawImage(img, 0, 0);
-    }
-    
-    
+    };
+
+
 
     // Install listeners for canvas dragging
     canvas.on("mousedown", function (e) {
@@ -39,7 +39,7 @@ $(document).ready(function() {
         // Disable text select cursor
         document.onselectstart = function() {
             return false;
-        }
+        };
 
         // Change the cursor to a grabbing hand
         canvas.addClass('grabbing');
@@ -53,7 +53,7 @@ $(document).ready(function() {
         // Enable text select cursor
         document.onselectstart = function() {
             return true;
-        }
+        };
 
         // Change the cursor to a pointer
         canvas.removeClass('grabbing');
