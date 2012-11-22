@@ -73,7 +73,7 @@ $(document).ready(function() {
         if (currentFloor === 0)
             currentFloor = floors.length - 1;
         else
-            currentFloor = (currentFloor - 1) % floors.length;
+            currentFloor = (currentFloor - 1);
         loadFloor(currentFloor);
     });
 
@@ -110,14 +110,15 @@ function redrawFloor(x, y) {
 }
 
 function zoom() {
-    var width = floors[currentFloor].width*currentZoom;
-    var height = floors[currentFloor].height*currentZoom;
+    var width = floors[currentFloor].width;
+    var height = floors[currentFloor].height;
     var newWidth = width * currentZoom;
     var newHeight = height * currentZoom;
 
     ctx.clearRect(0, 0, 640, 480);
     ctx.save();
-    ctx.translate(-((newWidth - width) / 2), -((newHeight - height) / 2));
+    ctx.translate(-((newWidth - width) / 2) - currentZoom*previousPosition.x,
+                  -((newHeight - height) / 2) - currentZoom*previousPosition.y);
     ctx.scale(currentZoom, currentZoom);
     ctx.drawImage(img, 0, 0);
     ctx.restore();
@@ -125,12 +126,10 @@ function zoom() {
 
 function zoomIn() {
     currentZoom += 0.2;
-    resetPreviousPosition();
     zoom();
 }
 
 function zoomOut() {
     currentZoom -= 0.2;
-    resetPreviousPosition();
     zoom();
 }
