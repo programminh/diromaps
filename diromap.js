@@ -3,8 +3,9 @@ var canvas;
 var ctx;
 var img;
 var currentPosition = {x: 0, y: 0};
-var previousPosition = {x: 0, y: 0};
+var translatePosition = {x: 0, y: 0};
 var currentZoom = 1;
+var zoomMultiplier = 0.9;
 
 // Detects if we are dragging or not.
 var draggable = false;
@@ -17,9 +18,11 @@ var floors = [
 ];
 
 $(document).ready(function() {
-    console.log('ready');
-
     canvas = $('#canvas');
+    translatePosition = {
+        x: 0,
+        y: 0
+    };
     ctx = canvas[0].getContext("2d");
     img = new Image();
     img.src = "images/etage1.gif";
@@ -28,13 +31,21 @@ $(document).ready(function() {
         ctx.drawImage(img, 0, 0);
     };
 
+    $('#zoomIn').on("click", function () {
+        currentZoom /= zoomMultiplier;
+        draw();
+    });
 
+    $('#zoomOut').on("click", function () {
+        currentZoom *= zoomMultiplier;
+        draw();
+    });
 
     // Install listeners for canvas dragging
     canvas.on("mousedown", function (e) {
-        currentPosition = {x: e.clientX + previousPosition.x,
-                           y: e.clientY + previousPosition.y};
         draggable = true;
+        currentPosition = {x: e.clientX - translatePosition.x,
+                           y: e.clientY - translatePosition.y};
 
         // Disable text select cursor
         document.onselectstart = function() {
@@ -46,8 +57,6 @@ $(document).ready(function() {
     });
 
     canvas.on("mouseup", function (e) {
-        previousPosition = {x: currentPosition.x - e.clientX,
-                            y: currentPosition.y - e.clientY};
         draggable = false;
 
         // Enable text select cursor
@@ -77,9 +86,6 @@ $(document).ready(function() {
         loadFloor(currentFloor);
     });
 
-    $('#zoomIn').on("click", zoomIn);
-    $('#zoomOut').on("click", zoomOut);
-
 });
 
 function resetPreviousPosition() {
@@ -91,45 +97,51 @@ function loadFloor(floorIndex) {
     var floor = floors[floorIndex];
     img.src = floor.image;
     currentZoom = 1;
-    redrawFloor(0, 0);
+    draw();
 }
 
 
 function moveMap(e) {
     if (draggable) {
-        redrawFloor(e.clientX - currentPosition.x, e.clientY - currentPosition.y);
+        translatePosition.x = e.clientX - currentPosition.x;
+        translatePosition.y = e.clientY - currentPosition.y;
+        draw();
     }
 }
 
 
-function redrawFloor(x, y) {
-    ctx.clearRect(0, 0, 640, 480);
-    ctx.drawImage(img, x, y,
-                  floors[currentFloor].width*currentZoom,
-                  floors[currentFloor].height*currentZoom);
-}
+// function redrawFloor(x, y) {
+//     ctx.clearRect(0, 0, 640, 480);
+//     ctx.save();
+//     ctx.translate(x, y);
+//     ctx.scale(currentZoom, currentZoom);
+//     ctx.drawImage(img, 0, 0);
+//     //ctx.drawImage(img, x, y);
+//     ctx.restore();
+// }
 
-function zoom() {
-    var width = floors[currentFloor].width;
-    var height = floors[currentFloor].height;
-    var newWidth = width * currentZoom;
-    var newHeight = height * currentZoom;
+// function zoom() {
+//     var width = floors[currentFloor].width;
+//     var height = floors[currentFloor].height;
+//     var newWidth = width * currentZoom;
+//     var newHeight = height * currentZoom;
+//     var ratio = width / newWidth;
 
+//     ctx.clearRect(0, 0, 640, 480);
+//     ctx.save();
+//     console.log(previousPosition);
+//     ctx.translate(-((newWidth - width) / 2) - currentZoom*previousPosition.x,
+//                   -((newHeight - height) / 2) - currentZoom*previousPosition.y);
+//     ctx.scale(currentZoom, currentZoom);
+//     ctx.drawImage(img, 0, 0);
+//     ctx.restore();
+// }
+
+function draw() {
     ctx.clearRect(0, 0, 640, 480);
     ctx.save();
-    ctx.translate(-((newWidth - width) / 2) - currentZoom*previousPosition.x,
-                  -((newHeight - height) / 2) - currentZoom*previousPosition.y);
+    ctx.translate(translatePosition.x, translatePosition.y);
     ctx.scale(currentZoom, currentZoom);
     ctx.drawImage(img, 0, 0);
     ctx.restore();
-}
-
-function zoomIn() {
-    currentZoom += 0.2;
-    zoom();
-}
-
-function zoomOut() {
-    currentZoom -= 0.2;
-    zoom();
 }
