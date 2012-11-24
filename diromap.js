@@ -127,6 +127,8 @@ function loadFloor(floorIndex) {
 
 function moveMap(e) {
     if (draggable) {
+        // Hide the info bubble
+        infoBubble.addClass('hide');
         translatePosition.x = e.clientX - currentPosition.x;
         translatePosition.y = e.clientY - currentPosition.y;
         draw();
@@ -185,6 +187,7 @@ function getHotspot(e) {
             return (n * currentZoom + translatePosition.y);
         });
 
+        // Check if point is within the polygon
         if (pnpoly(translatedX, translatedY, x, y)) { 
             currentHotspot = floorHotspot[i];
             break;
@@ -193,6 +196,7 @@ function getHotspot(e) {
 
     if(currentHotspot != null) {
 
+        // Check whether there is an url attribute
         if(currentHotspot.url) {
             infoText = '<a href="' + currentHotspot.url + '">' + currentHotspot.text + '</a>';
         }
@@ -200,7 +204,10 @@ function getHotspot(e) {
             infoText = currentHotspot.text;
         }
 
+        // Draw a stroke around for the hotspot
         drawPolygon(translatedX, translatedY);
+
+        // Display the info bubble
         infoBubble.html(infoText)
                     .removeClass('hide')
                     .css('left', e.clientX)
@@ -227,6 +234,9 @@ function draw() {
  * @param  {Array} ys Array of Y coords
  */
 function drawPolygon(xs, ys) {
+    // This prevents multiple stroked area
+    draw();
+
     ctx.beginPath();
     ctx.moveTo(xs[0], ys[0]);
 
