@@ -128,11 +128,11 @@ function moveMap(e) {
 
         // Translate the new coordinates according to the translation and the zoom
         translatedX = $.map(floorHotspot[i].xs, function(n){
-            return (n + translatePosition.x) * currentZoom;
+            return (n * currentZoom + translatePosition.x);
         });
 
         translatedY = $.map(floorHotspot[i].ys, function(n){
-            return (n + translatePosition.y) * currentZoom;
+            return (n * currentZoom + translatePosition.y);
         });
 
         if (pnpoly(translatedX, translatedY, x, y)) { 
@@ -150,6 +150,8 @@ function moveMap(e) {
 
     $('#x').html(x);
     $('#y').html(y);
+
+
 }
 
 /**
