@@ -136,6 +136,9 @@ function moveMap(e) {
     else {
         $('#status').html('');
     }
+
+    $('#x').html(x);
+    $('#y').html(y);
 }
 
 /**
@@ -155,41 +158,12 @@ function pnpoly(xs, ys, x, y)
   var nvert = xs.length;
 
   for (i = 0, j = nvert-1; i < nvert; j = i++) {
-    if ( ((ys[i]>y) != (ys[j]>y)) &&
-     (x < (xs[j]-xs[i]) * (y-ys[i]) / (ys[j]-ys[i]) + xs[i]) )
+    if ( ((ys[i]+translatePosition.y>y) != (ys[j]+translatePosition.y>y)) &&
+     (x < ((xs[j]+translatePosition.x)-(xs[i]+translatePosition.x)) * (y-(ys[i]+translatePosition.y)) / (ys[j]-(ys[i]+translatePosition.y)) + (xs[i]+translatePosition.x)) )
        c = !c;
   }
   return c;
 }
-
-
-
-// function redrawFloor(x, y) {
-//     ctx.clearRect(0, 0, 640, 480);
-//     ctx.save();
-//     ctx.translate(x, y);
-//     ctx.scale(currentZoom, currentZoom);
-//     ctx.drawImage(img, 0, 0);
-//     //ctx.drawImage(img, x, y);
-//     ctx.restore();
-// }
-
-// function zoom() {
-//     var width = floors[currentFloor].width;
-//     var height = floors[currentFloor].height;
-//     var newWidth = width * currentZoom;
-//     var newHeight = height * currentZoom;
-//     var ratio = width / newWidth;
-
-//     ctx.clearRect(0, 0, 640, 480);
-//     ctx.save();
-//     console.log(previousPosition);
-//     ctx.translate(-((newWidth - width) / 2) - currentZoom*previousPosition.x,
-//                   -((newHeight - height) / 2) - currentZoom*previousPosition.y);
-//     ctx.scale(currentZoom, currentZoom);
-//     ctx.drawImage(img, 0, 0);
-//     ctx.restore();
-// }
 
 function draw() {
     ctx.clearRect(0, 0, 640, 480);
