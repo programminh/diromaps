@@ -46,3 +46,14 @@ img {
 img.map {
     display: none;
 }
+
+#info {
+    position: absolute;
+    border: 1px solid black;
+    background-color: #f8f8cb;
+    max-width: 200px;
+}
+
+.hide {
+    display: none;
+}

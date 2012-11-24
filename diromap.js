@@ -6,6 +6,7 @@ var currentPosition = {x: 0, y: 0};
 var translatePosition = {x: 0, y: 0};
 var currentZoom = 1;
 var zoomMultiplier = 0.9;
+var infoBubble;
 
 // Detects if we are dragging or not.
 var draggable = false;
@@ -20,6 +21,8 @@ var floors = [
 
 $(document).ready(function() {
 
+
+    infoBubble = $('#info');
     canvas = $('#canvas');
     translatePosition = {
         x: 0,
@@ -71,16 +74,34 @@ $(document).ready(function() {
         canvas.removeClass('grabbing');
     });
 
+    canvas.on("click", getHotspot);
+
     canvas.on("mousemove", moveMap);
 
     $('#up').on("click", function () {
         resetPreviousPosition();
+
+        // Reset translate position
+        translatePosition.x = 0;
+        translatePosition.y = 0;
+
+        // Hide the bubble
+        infoBubble.addClass('hide');
+
         currentFloor = (currentFloor + 1) % floors.length;
         loadFloor(currentFloor);
     });
 
     $('#down').on("click", function () {
         resetPreviousPosition();
+
+        // Reset translate position
+        translatePosition.x = 0;
+        translatePosition.y = 0;
+
+        // Hide the bubble
+        infoBubble.addClass('hide');
+
         // HACK
         if (currentFloor === 0)
             currentFloor = floors.length - 1;
@@ -110,53 +131,11 @@ function moveMap(e) {
         translatePosition.y = e.clientY - currentPosition.y;
         draw();
     }
-
-    // Get location of the canvas rectangle
-    var rect = canvas[0].getBoundingClientRect();
-    
-    // Coordinates within the canvas
-    var x = e.clientX - Math.round(rect.left);
-    var y = e.clientY - Math.round(rect.top);
-
-    // Choose the array of hotspot according to the current floor
-    var floorHotspot = hotspots[currentFloor];
-    var currentHotspot = null;
-
-    var translatedX, translatedY;
-    
-    for (var i = floorHotspot.length - 1; i >= 0; i--) {
-
-        // Translate the new coordinates according to the translation and the zoom
-        translatedX = $.map(floorHotspot[i].xs, function(n){
-            return (n * currentZoom + translatePosition.x);
-        });
-
-        translatedY = $.map(floorHotspot[i].ys, function(n){
-            return (n * currentZoom + translatePosition.y);
-        });
-
-        if (pnpoly(translatedX, translatedY, x, y)) { 
-            currentHotspot = floorHotspot[i];
-            break;
-        }
-    }
-
-    if(currentHotspot != null) {
-        $('#status').html(currentHotspot.local + ': ' + currentHotspot.text);
-    }
-    else {
-        $('#status').html('');
-    }
-
-    $('#x').html(x);
-    $('#y').html(y);
-
-
 }
 
 /**
  * Computes whether a point is within a polygon
- * Based on the Jordan curve theorem
+ * Based on the Jordan Curve Theorem
  * This is a JavaScript adaptation of the C code provided by W. Randolph Franklin at
  * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
  * @param  {Array} xs Array of the X coordinates of the polygon
@@ -178,6 +157,61 @@ function pnpoly(xs, ys, x, y)
   return c;
 }
 
+function getHotspot(e) {
+    var infoText;
+
+    // Get location of the canvas rectangle
+    var rect = canvas[0].getBoundingClientRect();
+    
+    // Coordinates within the canvas
+    var x = e.clientX - Math.round(rect.left);
+    var y = e.clientY - Math.round(rect.top);
+
+    // Choose the array of hotspot according to the current floor
+    var floorHotspot = hotspots[currentFloor];
+    var currentHotspot = null;
+
+    var translatedX, translatedY;
+    
+    // Iterate through all the hotspots on the current floor
+    for (var i = floorHotspot.length - 1; i >= 0; i--) {
+
+        // Translate the new coordinates according to the translation and the zoom
+        translatedX = $.map(floorHotspot[i].xs, function(n){
+            return (n * currentZoom + translatePosition.x);
+        });
+
+        translatedY = $.map(floorHotspot[i].ys, function(n){
+            return (n * currentZoom + translatePosition.y);
+        });
+
+        if (pnpoly(translatedX, translatedY, x, y)) { 
+            currentHotspot = floorHotspot[i];
+            break;
+        }
+    }
+
+    if(currentHotspot != null) {
+
+        if(currentHotspot.url) {
+            infoText = '<a href="' + currentHotspot.url + '">' + currentHotspot.text + '</a>';
+        }
+        else {
+            infoText = currentHotspot.text;
+        }
+
+        drawPolygon(translatedX, translatedY);
+        infoBubble.html(infoText)
+                    .removeClass('hide')
+                    .css('left', e.clientX)
+                    .css('top', e.clientY);
+    }
+    else {
+        infoBubble.addClass('hide');
+        draw();
+    }
+}
+
 function draw() {
     ctx.clearRect(0, 0, 640, 480);
     ctx.save();
@@ -185,4 +219,22 @@ function draw() {
     ctx.scale(currentZoom, currentZoom);
     ctx.drawImage(img, 0, 0);
     ctx.restore();
+}
+
+/**
+ * Draws a red stroked polygon
+ * @param  {Array} xs Array of X coords
+ * @param  {Array} ys Array of Y coords
+ */
+function drawPolygon(xs, ys) {
+    ctx.beginPath();
+    ctx.moveTo(xs[0], ys[0]);
+
+    for (var i = 1; i < xs.length; i++) {
+        ctx.lineTo(xs[i], ys[i]);
+    }
+    ctx.strokeStyle = "#CD0000";
+    ctx.lineWidth = 1;
+    ctx.closePath()
+    ctx.stroke();
 }
