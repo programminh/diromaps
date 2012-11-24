@@ -11,6 +11,7 @@ var zoomMultiplier = 0.9;
 var draggable = false;
 
 var currentFloor = 0;
+
 var floors = [
     {image: "images/etage1.gif", width: 587, height: 612},
     {image: "images/etage2.gif", width: 587, height: 635},
@@ -18,6 +19,7 @@ var floors = [
 ];
 
 $(document).ready(function() {
+
     canvas = $('#canvas');
     translatePosition = {
         x: 0,
@@ -31,6 +33,7 @@ $(document).ready(function() {
         ctx.drawImage(img, 0, 0);
     };
 
+    
     $('#zoomIn').on("click", function () {
         currentZoom /= zoomMultiplier;
         draw();
@@ -107,7 +110,58 @@ function moveMap(e) {
         translatePosition.y = e.clientY - currentPosition.y;
         draw();
     }
+
+    // Get location of the canvas rectangle
+    var rect = canvas[0].getBoundingClientRect();
+    
+    // Coordinates within the canvas
+    var x = e.clientX - Math.round(rect.left);
+    var y = e.clientY - Math.round(rect.top);
+
+    // Choose the array of hotspot according to the current floor
+    var floorHotspot = hotspots[currentFloor];
+    var currentHotspot = null;
+    
+    for (var i = floorHotspot.length - 1; i >= 0; i--) {
+
+        if (pnpoly(floorHotspot[i].xs, floorHotspot[i].ys, x, y)) { 
+            currentHotspot = floorHotspot[i];
+            break;
+        }
+    }
+
+    if(currentHotspot != null) {
+        $('#status').html(currentHotspot.local + ': ' + currentHotspot.text);
+    }
+    else {
+        $('#status').html('');
+    }
 }
+
+/**
+ * Computes whether a point is within a polygon
+ * Based on the Jordan curve theorem
+ * This is a JavaScript adaptation of the C code provided by W. Randolph Franklin at
+ * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+ * @param  {Array} xs Array of the X coordinates of the polygon
+ * @param  {Array} ys Array of the Y coordinates of the polygon
+ * @param  {int} x  Coordinate x of the point
+ * @param  {int} y  Coordinate y of the point
+ * @return {boolean}    Within the point or not
+ */     
+function pnpoly(xs, ys, x, y)
+{
+  var i, j, c = false;
+  var nvert = xs.length;
+
+  for (i = 0, j = nvert-1; i < nvert; j = i++) {
+    if ( ((ys[i]>y) != (ys[j]>y)) &&
+     (x < (xs[j]-xs[i]) * (y-ys[i]) / (ys[j]-ys[i]) + xs[i]) )
+       c = !c;
+  }
+  return c;
+}
+
 
 
 // function redrawFloor(x, y) {
