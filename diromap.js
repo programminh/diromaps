@@ -121,10 +121,21 @@ function moveMap(e) {
     // Choose the array of hotspot according to the current floor
     var floorHotspot = hotspots[currentFloor];
     var currentHotspot = null;
+
+    var translatedX, translatedY;
     
     for (var i = floorHotspot.length - 1; i >= 0; i--) {
 
-        if (pnpoly(floorHotspot[i].xs, floorHotspot[i].ys, x, y)) { 
+        // Translate the new coordinates according to the translation and the zoom
+        translatedX = $.map(floorHotspot[i].xs, function(n){
+            return (n + translatePosition.x) * currentZoom;
+        });
+
+        translatedY = $.map(floorHotspot[i].ys, function(n){
+            return (n + translatePosition.y) * currentZoom;
+        });
+
+        if (pnpoly(translatedX, translatedY, x, y)) { 
             currentHotspot = floorHotspot[i];
             break;
         }
@@ -158,8 +169,8 @@ function pnpoly(xs, ys, x, y)
   var nvert = xs.length;
 
   for (i = 0, j = nvert-1; i < nvert; j = i++) {
-    if ( ((ys[i]+translatePosition.y>y) != (ys[j]+translatePosition.y>y)) &&
-     (x < ((xs[j]+translatePosition.x)-(xs[i]+translatePosition.x)) * (y-(ys[i]+translatePosition.y)) / (ys[j]-(ys[i]+translatePosition.y)) + (xs[i]+translatePosition.x)) )
+    if ( ((ys[i]>y) != (ys[j]>y)) &&
+     (x < (xs[j]-xs[i]) * (y-ys[i]) / (ys[j]-ys[i]) + xs[i]) )
        c = !c;
   }
   return c;
