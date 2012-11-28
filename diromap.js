@@ -7,6 +7,8 @@ var translatePosition = {x: 0, y: 0};
 var currentZoom = 1;
 var zoomMultiplier = 0.9;
 var infoBubble;
+var pins = [ [], [], [] ];
+var pinImage = new Image();
 
 // Detects if we are dragging or not.
 var draggable = false;
@@ -35,6 +37,7 @@ $(document).ready(function() {
         // Load first floor
         ctx.drawImage(img, 0, 0);
     };
+    pinImage.src = "images/pin.png";
 
 
     $('#zoomIn').on("click", function () {
@@ -75,11 +78,17 @@ $(document).ready(function() {
     });
 
     canvas.on("click", function(e) {
-        getHotspot(e, "red", true);
+        if (e.shiftKey) {
+            addNewPin(e);
+        }
+        else {
+            getHotspot(e, "red", true);
+        }
     });
 
     canvas.on("mousemove", function(e) {
         moveMap(e);
+        getPins(e);
         getHotspot(e, "blue", false);
     });
 
@@ -201,7 +210,7 @@ function getHotspot(e, color, display) {
     }
 
     if(currentHotspot != null) {
-        if (currentHotspot.action) {
+        if (currentHotspot.action && display) {
             currentHotspot.action();
         }
         // Check whether there is an url attribute
@@ -237,6 +246,10 @@ function draw() {
     ctx.translate(translatePosition.x, translatePosition.y);
     ctx.scale(currentZoom, currentZoom);
     ctx.drawImage(img, 0, 0);
+    for (var i = pins[currentFloor].length - 1; i >= 0; i--) {
+        pins[currentFloor][i]
+        ctx.drawImage(pinImage, pins[currentFloor][i].x, pins[currentFloor][i].y);
+    }
     ctx.restore();
 }
 
@@ -291,4 +304,67 @@ function elevatorDown() {
 
 function parseHotspotText(str) {
     return str.split("\n");
+}
+
+function addNewPin(e) {
+    // Get location of the canvas rectangle
+    var rect = canvas[0].getBoundingClientRect();
+
+    // Coordinates within the canvas
+    var x = e.clientX - Math.round(rect.left);
+    var y = e.clientY - Math.round(rect.top);
+
+    var text = prompt('Entrez une note :');
+
+    var pin = { x: x, y: y, text: text};
+
+    pins[currentFloor].push(pin);
+
+    draw();
+}
+
+function getPins(e) {
+    // Corners of the pin
+    // 37 x 34
+    var xs, ys;
+    var translatedX, translatedY
+    var pin = null;
+
+    // Get location of the canvas rectangle
+    var rect = canvas[0].getBoundingClientRect();
+
+    // Coordinates within the canvas
+    var x = e.clientX - Math.round(rect.left);
+    var y = e.clientY - Math.round(rect.top);
+
+    var pinsCurrentFloor = pins[currentFloor];
+
+    for (var i = pinsCurrentFloor.length - 1; i >= 0; i--) {
+        xs = [ pinsCurrentFloor[i].x, pinsCurrentFloor[i].x + 37, pinsCurrentFloor[i].x + 37, pinsCurrentFloor[i].x ];
+        ys = [ pinsCurrentFloor[i].y, pinsCurrentFloor[i].y, pinsCurrentFloor[i].y + 34, pinsCurrentFloor[i].y + 34 ];
+
+        // Translate the new coordinates according to the translation and the zoom
+        translatedX = $.map(xs, function(n){
+            return (n * currentZoom + translatePosition.x);
+        });
+
+        translatedY = $.map(ys, function(n){
+            return (n * currentZoom + translatePosition.y);
+        });
+
+        if (pnpoly(translatedX, translatedY, x, y)) {
+            pin = pinsCurrentFloor[i];
+            break;
+        }
+    }
+    if (pin != null) {
+        infoBubble.html(pin.text)
+                    .addClass('show')
+                    .css('left', e.clientX)
+                    .css('top', e.clientY);
+    }
+    else {
+        infoBubble.removeClass('show');
+        draw();
+    }
 }

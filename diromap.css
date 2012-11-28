@@ -57,3 +57,7 @@ img.map {
 .hide {
     display: none;
 }
+
+.show {
+    display: inline;
+}
