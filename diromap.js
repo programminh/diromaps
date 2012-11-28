@@ -252,7 +252,7 @@ function drawPolygon(xs, ys) {
 }
 
 function checkFloor(floor) {
-    return floor >= 0 && floor <= floors.length;
+    return floor && floor >= 0 && floor <= floors.length;
 }
 
 function selectFloor(choice) {
