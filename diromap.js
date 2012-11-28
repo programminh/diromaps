@@ -74,9 +74,14 @@ $(document).ready(function() {
         canvas.removeClass('grabbing');
     });
 
-    canvas.on("click", getHotspot);
+    canvas.on("click", function(e) {
+        getHotspot(e, "red", true);
+    });
 
-    canvas.on("mousemove", moveMap);
+    canvas.on("mousemove", function(e) {
+        moveMap(e);
+        getHotspot(e, "blue", false);
+    });
 
     $('#up').on("click", function () {
         resetPreviousPosition();
@@ -159,8 +164,9 @@ function pnpoly(xs, ys, x, y)
   return c;
 }
 
-function getHotspot(e) {
+function getHotspot(e, color, display) {
     var infoText;
+    var splitText;
 
     // Get location of the canvas rectangle
     var rect = canvas[0].getBoundingClientRect();
@@ -200,20 +206,24 @@ function getHotspot(e) {
         }
         // Check whether there is an url attribute
         else if(currentHotspot.url) {
-            infoText = '<a href="' + currentHotspot.url + '">' + currentHotspot.text + '</a>';
+            splitText = parseHotspotText(currentHotspot.text);
+            infoText = splitText[0]+'<br><a href="' + currentHotspot.url + '">' + splitText[1] + '</a>';
         }
         else {
             infoText = currentHotspot.text;
         }
 
         // Draw a stroke around for the hotspot
-        drawPolygon(translatedX, translatedY);
+        drawPolygon(color, translatedX, translatedY);
 
+        if (display) {
         // Display the info bubble
         infoBubble.html(infoText)
                     .removeClass('hide')
                     .css('left', e.clientX)
                     .css('top', e.clientY);
+        }
+        
     }
     else {
         infoBubble.addClass('hide');
@@ -235,7 +245,7 @@ function draw() {
  * @param  {Array} xs Array of X coords
  * @param  {Array} ys Array of Y coords
  */
-function drawPolygon(xs, ys) {
+function drawPolygon(color, xs, ys) {
     // This prevents multiple stroked area
     draw();
 
@@ -245,7 +255,7 @@ function drawPolygon(xs, ys) {
     for (var i = 1; i < xs.length; i++) {
         ctx.lineTo(xs[i], ys[i]);
     }
-    ctx.strokeStyle = "#CD0000";
+    ctx.strokeStyle = color;
     ctx.lineWidth = 1;
     ctx.closePath();
     ctx.stroke();
@@ -277,4 +287,8 @@ function elevatorDown() {
         choice = currentFloor;;
     currentFloor = selectFloor(choice);
     loadFloor(currentFloor);
+}
+
+function parseHotspotText(str) {
+    return str.split("\n");
 }
