@@ -36,7 +36,7 @@ $(document).ready(function() {
         ctx.drawImage(img, 0, 0);
     };
 
-    
+
     $('#zoomIn').on("click", function () {
         currentZoom /= zoomMultiplier;
         draw();
@@ -145,7 +145,7 @@ function moveMap(e) {
  * @param  {int} x  Coordinate x of the point
  * @param  {int} y  Coordinate y of the point
  * @return {boolean}    Within the point or not
- */     
+ */
 function pnpoly(xs, ys, x, y)
 {
   var i, j, c = false;
@@ -164,7 +164,7 @@ function getHotspot(e) {
 
     // Get location of the canvas rectangle
     var rect = canvas[0].getBoundingClientRect();
-    
+
     // Coordinates within the canvas
     var x = e.clientX - Math.round(rect.left);
     var y = e.clientY - Math.round(rect.top);
@@ -174,7 +174,7 @@ function getHotspot(e) {
     var currentHotspot = null;
 
     var translatedX, translatedY;
-    
+
     // Iterate through all the hotspots on the current floor
     for (var i = floorHotspot.length - 1; i >= 0; i--) {
 
@@ -188,16 +188,18 @@ function getHotspot(e) {
         });
 
         // Check if point is within the polygon
-        if (pnpoly(translatedX, translatedY, x, y)) { 
+        if (pnpoly(translatedX, translatedY, x, y)) {
             currentHotspot = floorHotspot[i];
             break;
         }
     }
 
     if(currentHotspot != null) {
-
+        if (currentHotspot.action) {
+            currentHotspot.action();
+        }
         // Check whether there is an url attribute
-        if(currentHotspot.url) {
+        else if(currentHotspot.url) {
             infoText = '<a href="' + currentHotspot.url + '">' + currentHotspot.text + '</a>';
         }
         else {
@@ -245,6 +247,34 @@ function drawPolygon(xs, ys) {
     }
     ctx.strokeStyle = "#CD0000";
     ctx.lineWidth = 1;
-    ctx.closePath()
+    ctx.closePath();
     ctx.stroke();
+}
+
+function checkFloor(floor) {
+    return floor >= 0 && floor <= floors.length;
+}
+
+function selectFloor(choice) {
+    var newFloor = prompt("À quel étage voulez-vous aller?", choice) - 1;
+    if (checkFloor(newFloor))
+        return newFloor;
+    else
+        return currentFloor;
+}
+
+function elevatorUp() {
+    var choice = (currentFloor + 1) % floors.length + 1;
+    currentFloor = selectFloor(choice);
+    loadFloor(currentFloor);
+}
+
+function elevatorDown() {
+    var choice;
+    if (currentFloor === 0)
+        choice = floors.length;
+    else
+        choice = currentFloor;;
+    currentFloor = selectFloor(choice);
+    loadFloor(currentFloor);
 }

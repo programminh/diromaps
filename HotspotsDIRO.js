@@ -3,7 +3,7 @@ var hotspots = [
   { "xs": [292, 310, 310, 292] , "ys": [191, 191, 211, 211] , "local": "1241" , "text": "Ascenseur vers le tunnel menant au pavillon Claire-McNicoll" } ,
   { "xs": [233, 247, 247, 233] , "ys": [185, 185, 237, 237] , "local": "1239" , "text": "Escalier vers le tunnel menant au pavillon Claire-McNicoll" } ,
   { "xs": [250, 289, 289, 250] , "ys": [163, 163, 190, 190] , "local": "1240" , "text": "Entrée Nord du pavillon 2920 chemin de la Tour" } ,
-  { "url": "etage2.shtml" , "xs": [274, 292, 292, 274] , "ys": [368, 368, 386, 386] , "local": "etage2" , "text": "Ascenseur\nCliquez pour l'actionner" } ,
+  { "action": function() { elevatorUp(); } , "xs": [274, 292, 292, 274] , "ys": [368, 368, 386, 386] , "local": "etage2" , "text": "Ascenseur\nCliquez pour l'actionner" } ,
   { "xs": [14, 73, 73, 14] , "ys": [241, 241, 253, 253] , "local": "1000" , "text": "Passage vers le pavillon Paul Desmarais" } ,
   { "xs": [317, 317, 321, 321, 362, 362, 317] , "ys": [451, 478, 479, 502, 502, 452, 451] , "local": "1406" , "text": "Toilette des femmes" } ,
   { "xs": [271, 295, 295, 320, 320, 272, 271] , "ys": [461, 461, 481, 481, 502, 502, 461] , "local": "1408" , "text": "Toilette des hommes" } ,
@@ -24,8 +24,8 @@ var hotspots = [
   { "xs": [11, 127, 127, 11] , "ys": [123, 123, 239, 239] , "local": "1360" , "text": "Salle de cours, projecteur multimédia 1024×768" } ,
   { "xs": [11, 143, 143, 11] , "ys": [38, 38, 112, 112] , "local": "1340" , "text": "Laboratoire d'enseignement Jacques St-Pierre (JSP), projecteur multimédia 1024×768" } ] ,
 [
-  { "url": "etage1.shtml" , "xs": [274, 293, 293, 274] , "ys": [433, 433, 451, 451] , "local": "etage1" , "text": "Ascenseur\nCliquez pour l'actionner" } ,
-  { "url": "etage3.shtml" , "xs": [274, 293, 293, 274] , "ys": [392, 392, 410, 410] , "local": "etage3" , "text": "Ascenseur\nCliquez pour l'actionner" } ,
+  { "action": function () { elevatorDown(); }, "xs": [274, 293, 293, 274] , "ys": [433, 433, 451, 451] , "local": "etage1" , "text": "Ascenseur\nCliquez pour l'actionner" } ,
+  { "action": function () { elevatorUp(); }, "xs": [274, 293, 293, 274] , "ys": [392, 392, 410, 410] , "local": "etage3" , "text": "Ascenseur\nCliquez pour l'actionner" } ,
   { "xs": [325, 355, 355, 325] , "ys": [401, 401, 432, 432] , "local": "2201" , "text": "Toilette des femmes" } ,
   { "xs": [296, 308, 308, 324, 324, 296, 296] , "ys": [407, 407, 401, 401, 432, 432, 407] , "local": "2205" , "text": "Toilette des hommes" } ,
   { "url": "http://vision3d.iro.umontreal.ca" , "xs": [275, 324, 324, 274, 274, 272, 272, 275, 275] , "ys": [273, 273, 325, 325, 321, 321, 281, 281, 273] , "local": "2262-2264-2216" , "text": "Laboratoire Vision et modélisation géométrique\nCliquez pour plus d'informations" } ,
@@ -97,7 +97,7 @@ var hotspots = [
   { "url": "http://www.iro.umontreal.ca/~frasson" , "xs": [12, 30, 30, 40, 40, 12, 12] , "ys": [37, 37, 67, 67, 79, 79, 37] , "local": "2363" , "text": "FRASSON, Claude, professeur titulaire\nCliquez pour plus d'informations" } ,
   { "url": "http://www.bib.umontreal.ca/MI/" , "xs": [241, 241, 229, 229, 220, 220, 222, 222, 220, 220, 223, 223, 220, 220, 223, 223, 221, 221, 127, 127, 100, 100, 78, 78, 100, 100, 102, 102, 204, 306, 407, 407, 451, 451, 467, 467, 537, 537, 547, 547, 550, 550, 547, 547, 551, 551, 547, 547, 538, 538, 538, 555, 555, 583, 583, 540, 540, 468, 396, 396, 295, 295, 283, 283, 271, 271, 241] , "ys": [480, 477, 477, 479, 479, 471, 471, 461, 459, 450, 450, 439, 439, 428, 428, 417, 416, 410, 410, 412, 412, 457, 457, 586, 586, 623, 623, 631, 631, 631, 631, 609, 609, 597, 597, 609, 609, 594, 594, 584, 584, 573, 573, 563, 563, 552, 552, 546, 546, 542, 525, 524, 526, 526, 457, 457, 428, 416, 403, 433, 433, 458, 458, 474, 474, 479, 480] , "local": "2405" , "text": "Bibliothèque de Mathématiques et informatique\nCliquez pour plus d'informations" } ] ,
 [
-  { "url": "etage2.shtml" , "xs": [275, 293, 293, 275] , "ys": [433, 433, 451, 451] , "local": "etage2" , "text": "Ascenseur\nCliquez pour l'actionner" } ,
+  { "action": function() { elevatorDown(); } , "xs": [275, 293, 293, 275] , "ys": [433, 433, 451, 451] , "local": "etage2" , "text": "Ascenseur\nCliquez pour l'actionner" } ,
   { "url": "http://www.iro.umontreal.ca/~mckenzie" , "xs": [583, 583, 556, 556, 583] , "ys": [421, 394, 394, 416, 421] , "local": "3143" , "text": "MCKENZIE, Pierre, professeur titulaire, resp. DESI\nCliquez pour plus d'informations" } ,
   { "url": "http://www.iro.umontreal.ca/~lascarma" , "xs": [556, 559, 559, 584, 584, 556, 556, 556] , "ys": [325, 325, 315, 315, 342, 342, 325, 325] , "local": "3151" , "text": "LASCAR, Magalie, agente de recherche\nCliquez pour plus d'informations" } ,
   { "xs": [556, 583, 583, 556] , "ys": [368, 368, 393, 393] , "local": "3145" , "text": "Bureau" } ,
