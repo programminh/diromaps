@@ -1,3 +1,9 @@
+/**
+ * DiroMaps v0.1
+ * Author: Vincent Foley, Truong Pham
+ * Map application of the DIRO using HTML5 Canvas
+ */
+
 // Make canvas, its context, and the image global.
 var canvas;
 var ctx;
@@ -216,7 +222,7 @@ function getHotspot(e, color, display) {
         // Check whether there is an url attribute
         else if(currentHotspot.url) {
             splitText = parseHotspotText(currentHotspot.text);
-            infoText = splitText[0]+'<br><a href="' + currentHotspot.url + '">' + splitText[1] + '</a>';
+            infoText = splitText[0]+'<br /><a href="' + currentHotspot.url + '">' + splitText[1] + '</a>';
         }
         else {
             infoText = currentHotspot.text;
